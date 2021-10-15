@@ -1,26 +1,40 @@
 package com.web.service;
 
+import java.io.FileReader;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Data {
-
-	public CallableStatement createStatement() {
+	
+	Connection getConnectionFromConfigFile() {
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
+			Object object = new JSONParser().parse(new FileReader("DBConfig.json"));
 			
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mobile_banking", "root", "root");
-		    
-		    CallableStatement statement = conn.prepareCall("call sp_GetAccounts()");
+			JSONObject connection_obj = (JSONObject) object;
+			
+			Class.forName(connection_obj.get("driver manager class").toString()).getDeclaredConstructor().newInstance();
+			
+			return DriverManager.getConnection(
+					connection_obj.get("url").toString(), connection_obj.get("user").toString(), 
+					connection_obj.get("password").toString()
+					);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	CallableStatement createStatement() {
+		try {		    
+		    CallableStatement statement = getConnectionFromConfigFile().prepareCall("call sp_GetAccounts()");
 		    
 		    statement.execute();
 		    
@@ -32,7 +46,7 @@ public class Data {
 		return null;
 	}
 	
-	public HashMap<Integer, Account> getData() {
+	protected HashMap<Integer, Account> getData() {
 		try {	
 			HashMap<Integer, Account> accountMap = new HashMap<>();
 			
