@@ -38,6 +38,15 @@ INSERT INTO `client_accounts` (`id`, `iban`, `balance`, `currency`, `last_operat
 	(6, 'MD77RS5632880', 11600, 'MDL', '14.09.2021-17.27.00-GTM+3');
 /*!40000 ALTER TABLE `client_accounts` ENABLE KEYS */;
 
+-- Дамп структуры для процедура mobile_banking.sp_GetAccountById
+DELIMITER //
+CREATE PROCEDURE `sp_GetAccountById`(IN Acc_id INT)
+BEGIN
+   SELECT * FROM client_accounts
+   WHERE Acc_id = id;
+END//
+DELIMITER ;
+
 -- Дамп структуры для процедура mobile_banking.sp_GetAccounts
 DELIMITER //
 CREATE PROCEDURE `sp_GetAccounts`()

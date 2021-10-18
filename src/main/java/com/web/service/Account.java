@@ -1,5 +1,9 @@
 package com.web.service;
 
+import org.json.simple.JSONObject;
+import org.springframework.stereotype.Component;
+
+@Component
 public class Account {
 	private String iban;
 	private int balance;
@@ -29,6 +33,16 @@ public class Account {
 
 	public String getLastOperationTime() {
 		return lastOperationTime;
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected JSONObject JSONAccountFactory(Account account){
+		JSONObject jsonAccount = new JSONObject();
+		jsonAccount.put("iban", account.getIban());
+		jsonAccount.put("balance", account.getBalance() + " " + account.getCurrency());
+		jsonAccount.put("last operation time", account.getLastOperationTime());
+		
+		return jsonAccount;
 	}
 	
 }
